@@ -538,9 +538,8 @@ class AVMediaPlayerTrack: MediaPlayerTrack {
         mediaType = track.assetTrack?.mediaType ?? .video
         name = track.assetTrack?.languageCode ?? ""
         languageCode = track.assetTrack?.languageCode
-        nominalFrameRate = ((track.assetTrack?.nominalFrameRate.isNaN ?? false) ? 0 : track.assetTrack?.nominalFrameRate) ?? 24.0
-        let estimatedDataRate = track.assetTrack?.estimatedDataRate
-        bitRate = Int64((( estimatedDataRate?.isNaN ?? false) ? 0 : estimatedDataRate) ?? 0)
+        nominalFrameRate =  AVMediaPlayerTrack.checkForFloat(track.assetTrack?.nominalFrameRate, defaultValue: 24.0)
+        bitRate = Int64(AVMediaPlayerTrack.checkForFloat(track.assetTrack?.estimatedDataRate, defaultValue: 0))
         #if os(xrOS)
         isPlayable = false
         #else
@@ -559,6 +558,20 @@ class AVMediaPlayerTrack: MediaPlayerTrack {
             isPlayable = await (try? track.assetTrack?.load(.isPlayable)) ?? false
         }
         #endif
+    }
+    
+    static func checkForFloat(_ floatValue: Float?, defaultValue: Float) -> Float {
+        if let floatValue = floatValue  {
+            if floatValue.isNaN {
+                return defaultValue
+            }
+            if floatValue.isInfinite {
+                return defaultValue
+            }
+            return floatValue
+        } else {
+            return defaultValue
+        }
     }
 
     func load() {}
