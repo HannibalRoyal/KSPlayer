@@ -539,7 +539,8 @@ class AVMediaPlayerTrack: MediaPlayerTrack {
         name = track.assetTrack?.languageCode ?? ""
         languageCode = track.assetTrack?.languageCode
         nominalFrameRate = ((track.assetTrack?.nominalFrameRate.isNaN ?? false) ? 0 : track.assetTrack?.nominalFrameRate) ?? 24.0
-        bitRate = Int64(((track.assetTrack?.estimatedDataRate.isNaN ?? false) ? 0 : track.assetTrack?.estimatedDataRate) ?? 0)
+        let estimatedDataRate = track.assetTrack?.estimatedDataRate
+        bitRate = Int64((( estimatedDataRate?.isNaN ?? false) ? 0 : estimatedDataRate) ?? 0)
         #if os(xrOS)
         isPlayable = false
         #else
